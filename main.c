@@ -5,7 +5,7 @@
 #include <string.h>
 #include <time.h>
 
-//global memories:
+//global variables:
 int comparisons = 0;
 int swaps = 0;
 
@@ -29,7 +29,7 @@ long long int* random_array(int n) {
     srand(time(NULL));
     long long int* li = calloc(n, sizeof(long long int));
     for (int i = 0; i < n; i++) {
-        li[i] = (RAND_MAX / 2 - rand()) % 15;
+        li[i] = (RAND_MAX / 2 - rand()) ;
     }
     return li;
 }
@@ -84,12 +84,12 @@ void heapify(long long int * li, int n, int i)
     int l = 2 * i + 1;
     int r = 2 * i + 2;
 
-    if (l < n && llabs(li[l]) < llabs(li[largest])){
+    if (l < n && comparator(li[largest], li[l]) > 0){
         largest = l;
         comparisons++;
     }
 
-    if (r < n && llabs(li[r]) < llabs(li[largest])) {
+    if (r < n && comparator(li[largest], li[r]) > 0) {
         largest = r;
         comparisons++;
     }
