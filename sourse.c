@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include<math.h>
+#include <math.h>
 
 double eps1 = 0.000001, eps2 = 0.0000001;
 
@@ -77,7 +77,7 @@ double integral ( double (*f)(double), double a, double b, double eps2){
             list2[i] = i % 2 == 0 ? list1[i/2] : f(a + (b - a) * i / n);
         }
         I_2n = list2[0];
-        I_2n += list2[n];
+          I_2n += list2[n];
         for (int i = 1; i < n; i++){
             I_2n += i % 2 == 0 ? list2[i] * 2 : list2[i] * 4;
         }
@@ -101,7 +101,7 @@ void print_integrals(void){
     double root2 = root(f1, f1_der, f2, f2_der, 0.5, 2, eps1);
     double root3 = root(f3, f3_der, f2, f2_der, 0.5, 1.5, eps1);
     double I_f1 = integral(f1, root1, root2, eps2);
-    double I_f2 = integral(f3, root3, root2, eps2);
+    double I_f2 = integral(f2, root3, root2, eps2);
     double I_f3 = integral(f3 ,root1, root3, eps2);
     printf("integral f1: %lf\nintegral f2: %lf\nintegral f3: %lf\n", I_f1, I_f2, I_f3);
     double ans = I_f1 - I_f2 - I_f3;
