@@ -14,7 +14,7 @@ global f1_der
 global f2_der
 global f3_der
 
-f1:
+f1: ;1 + 4/(x^2 + 1)
     push ebp
     mov ebp, esp
     finit
@@ -30,7 +30,7 @@ f1:
     leave 
     ret
     
-f2:
+f2: ;x^3
     push ebp
     mov ebp, esp
     finit 
@@ -42,7 +42,7 @@ f2:
     leave
     ret
     
-f3: ;row
+f3: ;2^(-x)
     push ebp
     mov ebp, esp
     sub esp, 16
