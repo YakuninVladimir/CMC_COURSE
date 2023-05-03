@@ -86,11 +86,10 @@ double integral ( double (*f)(double), double a, double b, double eps2){
         double delta = (b - a)/n;
         s1 = s2 + s1;
         s2 = 0;
-        for (double i = a + (b - a)/(n); i < b; i += 2*delta ){
+        for (double i = a + delta; i < b; i += 2*delta ){
             s2 +=f(i);
         }
         I_2n = (s0 + 4*s2 + 2*s1)*delta/3;
-        //printf("%lf \n", I_2n);
     } 
     return I_2n;
 }
@@ -188,54 +187,62 @@ void print_exeption(void){
 int main (int argc, char ** argv) {
     int num_of_commands = 7;
     char * commands[] = {"-roots", "-integrals", "-answer", "-help", "-iters", "-test-roots" ,"-test-integrals"};
-    int cur_num = 0;
-    for (int i = 0; i < num_of_commands; i++){
-        if (strcmp(argv[1], commands[i]) == 0){
-            cur_num = i + 1;
+    int  cur_arg = 1;
+  
+    while (cur_arg < argc){
+        int cur_num = 0;
+        for (int i = 0; i < num_of_commands; i++){
+            if (strcmp(argv[cur_arg], commands[i]) == 0){
+                cur_num = i + 1;
+            }
         }
-    }
-    int f_a, f_b;
-    double a, b;
-    switch (cur_num)
-    {
-    case 1:
-        print_roots();
-        break;
+        int f_a, f_b;
+        double a, b;
+        switch (cur_num)
+        {
+        case 1:
+            print_roots();
+            break;
 
-    case 2:
-        print_integrals();
-        break;
+        case 2:
+            print_integrals();
+            break;
 
-    case 3:
-        print_answer();
-        break;
+        case 3:
+            print_answer();
+            break;
 
-    case 4:
-        print_help_info();
-        break;
-    case 5:
-        f_a = atoi(argv[2]), f_b = atoi(argv[3]);
-        a = atof(argv[4]), b = atof(argv[5]);
-        f_a--;
-        f_b--;
-        print_iters(f_a, f_b, a, b);
-        break;
-    case 6:
-        f_a = atoi(argv[2]), f_b = atoi(argv[3]);
-        f_a--;
-        f_b--;
-        a = atof(argv[4]), b = atof(argv[5]);
-        test_roots(f_a, f_b, a, b);
-        break;
-    case 7:
-        f_a = atoi(argv[2]);
-        a = atof(argv[3]), b = atof(argv[4]);
-        f_a--;
-        test_integrals(f_a, a, b);
-        break;
-    default:
-    print_exeption();
-        break;
+        case 4:
+            print_help_info();
+            break;
+        case 5:
+            f_a = atoi(argv[cur_arg + 1]), f_b = atoi(argv[cur_arg + 2]);
+            a = atof(argv[cur_arg + 3]), b = atof(argv[cur_arg + 4]);
+            f_a--;
+            f_b--;
+            cur_arg += 4;
+            print_iters(f_a, f_b, a, b);
+            break;
+        case 6:
+            f_a = atoi(argv[cur_arg + 1]), f_b = atoi(argv[cur_arg + 2]);
+            a = atof(argv[cur_arg + 3]), b = atof(argv[cur_arg + 4]);
+            f_a--;
+            f_b--;
+            cur_arg += 4;
+            test_roots(f_a, f_b, a, b);
+            break;
+        case 7:
+            f_a = atoi(argv[cur_arg + 1]);
+            a = atof(argv[cur_arg + 2]), b = atof(argv[cur_arg + 3]);
+            f_a--;
+            cur_arg += 3;
+            test_integrals(f_a, a, b);
+            break;
+        default:
+        print_exeption();
+            break;
+        }
+        cur_arg++;
     }    
     return 0;
 }
