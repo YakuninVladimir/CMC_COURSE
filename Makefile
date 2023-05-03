@@ -1,7 +1,7 @@
 all: integral
 
 clean: 
-	rm -rf integral sourse.o functions.o
+	rm -rf  sourse.o functions.o
 
 sourse.o: sourse.c
 	gcc -c -o sourse.o sourse.c -m32
