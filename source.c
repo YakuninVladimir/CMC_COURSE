@@ -4,7 +4,7 @@
 #include <string.h>
 
 
-double eps1 = 0.0001, eps2 = 0.00001; //точность вычисления корней и интегралов
+double eps1 = 0.0001, eps2 = 0.00001, eps_br = 0.00000000001; //точность вычисления корней и интегралов, а также точность сравнения с нулём
 
 int num_of_iterations = 0; //число итераций при вычислении корня 
 
@@ -57,18 +57,21 @@ double root ( double (*f)(double), double (*f_der)(double), double (*g)(double),
 
     if (delta1 * delta2 > 0){ //совпадение знаков, приближаемся справа
         double c = b;
-        while ((f(c) - g(c)) * (f(c - eps1) - g(c - eps1)) > 0) {
+        while ((f(c) - g(c)) * (f(c - eps1) - g(c - eps1)) > eps_br) {
             c = c - (f(c) -g(c))/(f_der(c) - g_der(c));//ищем точку пересечения касательной из точки с с осью Ох
             num_of_iterations++;
+            
         }
         return c;
     } 
     else{ // разные знаки, приближаемся слева
         double c = a;
+    
    
-        while ((f(c) - g(c)) * (f(c + eps1) - g(c + eps1)) > 0) {
+        while ((f(c) - g(c)) * (f(c + eps1) - g(c + eps1)) > eps_br) {
             c = c - (f(c) -g(c))/(f_der(c) - g_der(c));//ищем точку пересечения касательной из точки с с осью Ох
             num_of_iterations++;
+            
         }
         return c;
     }
@@ -147,14 +150,14 @@ void print_iters(int num_a, int num_b, double a, double b){
 void test_roots(int num_a, int num_b, double a, double b){
     double cur_root = root(functions[num_a], derivs[num_a], functions[num_b], derivs[num_b], a, b, eps1);
     print_del();
-    printf("intersection of f%d and f%d on [%lf, %lf] segment: %lf \n", num_a, num_b, a, b, cur_root);
+    printf("intersection of f%d and f%d on [%lf, %lf] segment: %lf \n", num_a + 1, num_b + 1, a, b, cur_root);
     print_del();
 }
 //поиск интеграла на данном промежутке(для отладки)
 void test_integrals(int num, double a, double b){
     double cur_integral = integral(functions[num], a, b, eps2);
     print_del();
-    printf("value of integral of f%d on [%lf, %lf] segment: %lf \n", num, a, b, cur_integral);
+    printf("value of integral of f%d on [%lf, %lf] segment: %lf \n", num + 1, a, b, cur_integral);
     print_del();
 }
 //печать списка фукнций и команд
