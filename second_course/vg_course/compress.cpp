@@ -1,6 +1,7 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -14,12 +15,12 @@ void wr(ofstream &out, int bit) {
     pos = 0;
     buf = 0;
   }
-  cout << (bit ? 1 : 0);
   char mask = (char)(bit ? 1 : 0) << pos;
-  // cout << bit;
   buf += mask;
   pos++;
 }
+
+void flu(ofstream &out) { out.write(&buf, 1); }
 
 void follow(ofstream &out, int bit, int foll) {
   wr(out, bit);
@@ -36,11 +37,17 @@ void print_table(vector<int> &li, unsigned short h) {
   }
 }
 
+string get_file_as_str(ifstream &inp) {
+  stringstream ans;
+  ans << inp.rdbuf();
+  return ans.str();
+}
+
 int main() {
   ifstream inp("./test");
   ofstream out("./out");
-  string s;
-  getline(inp, s);
+  string s = get_file_as_str(inp);
+  int n = s.size();
   vector<int> weights(256);
   for (auto &i : s)
     weights[i]++;
@@ -48,14 +55,11 @@ int main() {
   for (int i = 1; i <= 256; i++)
     pref[i] = weights[i - 1] + pref[i - 1];
   unsigned short l = 0, h = 65535;
-  print_table(pref, h);
+  // print_table(pref, h);
   long long int del = pref[256];
   unsigned short q1 = ((int)h + 1) / 4, q2 = q1 * 2, q3 = q1 * 3, bits = 0;
-  cout << q1 << ' ' << q2 << ' ' << q3 << endl;
-  inp.seekg(0, ios_base::beg);
-  char cur;
-  while (inp.get(cur)) {
-    int ind = cur;
+  for (int cur = 0; cur < n; cur++) {
+    int ind = s[cur];
     int prl = l, prh = h;
     l = prl + (prh - prl + 1) * pref[ind] / del;
     h = prl + (prh - prl + 1) * pref[ind + 1] / del - 1;
@@ -78,4 +82,5 @@ int main() {
       h += h + 1;
     }
   }
+  flu(out);
 }

@@ -2,12 +2,15 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
 using namespace std;
 
 typedef unsigned int us;
+
+bool is_eof = false;
 
 void wr(ofstream &out, int bit) {
   static char buf = 0, pos = 0;
@@ -25,12 +28,15 @@ unsigned char rd(ifstream &inp) {
   static int pos = 8;
   static unsigned char buf;
   if (pos >= 8) {
-    inp.read((char *)&buf, 1);
+    if (inp.peek() == EOF) {
+      is_eof = true;
+      return 0;
+    } else
+      inp.read((char *)&buf, 1);
     pos = 0;
   }
   unsigned char mask = 1 << (pos);
   pos++;
-  cout << ((mask & buf) >> (pos - 1));
   return (mask & buf) >> (pos - 1);
 }
 
@@ -45,12 +51,17 @@ int get_symb(us value, us l, us h, vector<int> &pref) {
   }
 }
 
+string get_file_as_str(ifstream &inp) {
+  stringstream ans;
+  ans << inp.rdbuf();
+  return ans.str();
+}
+
 int main() {
   ifstream table("./test");
   ifstream inp("./out");
   ofstream out("./output");
-  string s;
-  getline(table, s);
+  string s = get_file_as_str(table);
   vector<int> weights(256);
   for (auto &i : s) {
     weights[i]++;
@@ -71,8 +82,13 @@ int main() {
     m <<= 1;
   }
   value = nn;
-  for (int e = 0; e < 445; e++) {
-    int ind = get_symb(value, l, h, pref);
+  int num_of_step = 0;
+  int ind;
+  do {
+    num_of_step++;
+    if (num_of_step / 1000 != (num_of_step - 1) / 1000)
+      cout << num_of_step << endl;
+    ind = get_symb(value, l, h, pref);
     char sym = ind;
     out.write(&sym, 1);
     int prl = l, prh = h;
@@ -80,14 +96,11 @@ int main() {
     h = prl + (prh - prl + 1) * pref[ind + 1] / del - 1;
     while (true) {
       if (h < q2) {
-        cout << "";
       } else if (l >= q2) {
-        cout << "";
         value -= q2;
         l -= q2;
         h -= q2;
       } else if (l >= q1 && h < q3) {
-        cout << "";
         l -= q1;
         h -= q1;
         value -= q1;
@@ -97,8 +110,10 @@ int main() {
       l += l;
       h += h + 1;
       unsigned char bit = rd(inp);
-      cout << (unsigned)bit << endl;
+      if (is_eof) {
+        return 0;
+      }
       value = (value << 1) + bit;
     }
-  }
+  } while (ind != 0);
 }
