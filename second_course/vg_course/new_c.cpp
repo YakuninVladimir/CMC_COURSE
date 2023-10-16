@@ -7,7 +7,7 @@
 
 using namespace std;
 
-const long long int persistensy = 1;
+const long long int persistensy = 50;
 
 char buf = 0, pos = 0;
 
@@ -17,6 +17,7 @@ void wr(ofstream &out, int bit) {
     pos = 0;
     buf = 0;
   }
+  cout << bit;
   char mask = (char)(bit ? 1 : 0) << pos;
   buf += mask;
   pos++;
@@ -31,12 +32,14 @@ void follow(ofstream &out, int bit, int foll) {
   }
 }
 
-void print_table(vector<int> &li, unsigned short h) {
+void print_table(vector<long long int> &li, unsigned short l,
+                 unsigned short h) {
   int del = li[256];
   for (int i = 1; i < size(li); i++) {
-    cout << (char)(i - 1) << ' ' << (h + 1) * li[i - 1] / del << ' '
-         << (h + 1) * li[i] / del << endl;
+    cout << (char)(i - 1) << ' ' << 1ll * (h - l + 1) * li[i - 1] / del << ' '
+         << 1ll * (h - l + 1) * li[i] / del << "      ";
   }
+  cout << endl;
 }
 
 string get_file_as_str(ifstream &inp) {
@@ -60,15 +63,16 @@ int main() {
   for (int i = 1; i <= 256; i++)
     pref[i] = weights[i - 1] + pref[i - 1];
   unsigned short l = 0, h = 65535;
-  // print_table(pref, h);
+  print_table(pref, l, h);
   long long int del = pref[256];
   unsigned short q1 = ((int)h + 1) / 4, q2 = q1 * 2, q3 = q1 * 3, bits = 0;
   for (int cur = 0; cur < n; cur++) {
     int ind = s[cur];
-    update_pref_table(pref, ind);
+    // cout << "@@ " << l << ' ' << h << " @@" << endl;
     int prl = l, prh = h;
-    l = prl + (prh - prl + 1) * pref[ind] / del;
-    h = prl + (prh - prl + 1) * pref[ind + 1] / del - 1;
+    l = prl + 1ll * (prh - prl + 1) * pref[ind] / del;
+    h = prl + 1ll * (prh - prl + 1) * pref[ind + 1] / del - 1;
+    cout << "@@ " << l << ' ' << h << " @@" << endl;
     while (true) {
       if (h < q2) {
         follow(out, 0, bits);
@@ -87,6 +91,9 @@ int main() {
       l += l;
       h += h + 1;
     }
+    cout << "@@ " << l << ' ' << h << " @@" << endl;
+    update_pref_table(pref, ind);
+    // print_table(pref, l, h);
   }
   flu(out);
 }

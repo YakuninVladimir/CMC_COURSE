@@ -1,4 +1,3 @@
-
 #include <bitset>
 #include <cmath>
 #include <fstream>
@@ -11,7 +10,7 @@ using namespace std;
 
 typedef unsigned int us;
 
-const long long int persistensy = 1;
+const long long int persistensy = 50;
 
 bool is_eof = false;
 
@@ -62,6 +61,16 @@ string get_file_as_str(ifstream &inp) {
   return ans.str();
 }
 
+void print_table(vector<long long int> &li, unsigned short l,
+                 unsigned short h) {
+  int del = li[256];
+  for (int i = 1; i < size(li); i++) {
+    cout << (char)(i - 1) << ' ' << (h - l + 1) * li[i - 1] / del << ' '
+         << (h - l + 1) * li[i] / del << "      ";
+  }
+  cout << endl;
+}
+
 void update_pref_table(vector<long long int> &pref, int ind) {
   for (int i = ind + 1; i <= 256; i++)
     pref[i] += persistensy;
@@ -84,6 +93,7 @@ int main() {
     nn ^= (m & value) >> i;
     m <<= 1;
   }
+  print_table(pref, l, h);
   value = nn;
   int num_of_step = 0;
   int ind;
@@ -92,10 +102,10 @@ int main() {
     if (num_of_step / 1000 != (num_of_step - 1) / 1000)
       cout << num_of_step << endl;
     cout << "kkk" << endl;
-    cout << l << ' ' << value << ' ' << h << endl;
+    cout << "@@ " << l << ' ' << value << ' ' << bitset<16>(value) << ' ' << h
+         << " @@" << endl;
     ind = get_symb(value, l, h, pref);
-    cout << "eee" << endl;
-    update_pref_table(pref, ind);
+    cout << "<>" << (char)ind << "<>" << endl;
     char sym = ind;
     cout << "ggg" << endl;
     out.write(&sym, 1);
@@ -103,6 +113,8 @@ int main() {
     int prl = l, prh = h;
     l = prl + (prh - prl + 1) * pref[ind] / del;
     h = prl + (prh - prl + 1) * pref[ind + 1] / del - 1;
+
+    cout << "@@ " << l << ' ' << h << " @@" << endl;
     while (true) {
       if (h < q2) {
       } else if (l >= q2) {
@@ -124,5 +136,9 @@ int main() {
       }
       value = (value << 1) + bit;
     }
+
+    cout << "@@ " << l << ' ' << h << " @@" << endl;
+    update_pref_table(pref, ind);
+    print_table(pref, l, h);
   } while (ind != 0);
 }
